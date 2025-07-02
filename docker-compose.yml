@@ -12,11 +12,17 @@ services:
     ports:
       - "3000:80"
     networks:
-      - app_network
+      - homelab
     profiles:
       - prod
     environment:
       - VITE_API_URL=http://api-prod:3001
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend-prod.rule=Host(`dnd.your-domain.com`)"
+      - "traefik.http.routers.frontend-prod.entrypoints=websecure"
+      - "traefik.http.routers.frontend-prod.tls.certresolver=myresolver"
+      - "traefik.http.services.frontend-prod.loadbalancer.server.port=80"
 
   api-prod:
     container_name: api-prod
@@ -30,9 +36,15 @@ services:
     ports:
       - "3001:3000"
     networks:
-      - app_network
+      - homelab
     profiles:
       - prod
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-prod.rule=Host(`api.dnd.your-domain.com`)"
+      - "traefik.http.routers.api-prod.entrypoints=websecure"
+      - "traefik.http.routers.api-prod.tls.certresolver=myresolver"
+      - "traefik.http.services.api-prod.loadbalancer.server.port=3000"
 
   # Development Services
   frontend-dev:
@@ -47,11 +59,17 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - app_network
+      - homelab
     profiles:
       - dev
     environment:
       - VITE_API_URL=http://api-dev:3001
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend-dev.rule=Host(`dnd.weeboo.xyz`)"
+      - "traefik.http.routers.frontend-dev.entrypoints=websecure"
+      - "traefik.http.routers.frontend-dev.tls.certresolver=myresolver"
+      - "traefik.http.services.frontend-dev.loadbalancer.server.port=3000"
 
   api-dev:
     container_name: api-dev
@@ -65,12 +83,18 @@ services:
     ports:
       - "3001:3001"
     networks:
-      - app_network
+      - homelab
     profiles:
       - dev
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api-dev.rule=Host(`api.weeboo.xyz`)"
+      - "traefik.http.routers.api-dev.entrypoints=websecure"
+      - "traefik.http.routers.api-dev.tls.certresolver=myresolver"
+      - "traefik.http.services.api-dev.loadbalancer.server.port=3001"
 
 # Define a network, which allows containers to communicate
 # with each other, by using their container name as a hostname
 networks:
-  app_network:
-    driver: bridge
+  homelab:
+    external: true
