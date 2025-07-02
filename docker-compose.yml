@@ -1,0 +1,76 @@
+services:
+  # Production Services
+  frontend-prod:
+    container_name: frontend-prod
+    build:
+      context: .
+      dockerfile: ./apps/frontend/Dockerfile
+      args:
+        - TURBO_TEAM=${TURBO_TEAM}
+        - TURBO_TOKEN=${TURBO_TOKEN}
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - app_network
+    profiles:
+      - prod
+    environment:
+      - VITE_API_URL=http://api-prod:3001
+
+  api-prod:
+    container_name: api-prod
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+      args:
+        - TURBO_TEAM=${TURBO_TEAM}
+        - TURBO_TOKEN=${TURBO_TOKEN}
+    restart: always
+    ports:
+      - "3001:3001"
+    networks:
+      - app_network
+    profiles:
+      - prod
+
+  # Development Services
+  frontend-dev:
+    container_name: frontend-dev
+    build:
+      context: .
+      dockerfile: ./apps/frontend/Dockerfile.dev
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+      - /app/apps/frontend/node_modules
+    command: pnpm --filter frontend exec vite
+    ports:
+      - "3000:3000"
+    networks:
+      - app_network
+    profiles:
+      - dev
+    environment:
+      - VITE_API_URL=http://api-dev:3001
+
+  api-dev:
+    container_name: api-dev
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile.dev
+    volumes:
+      - ./apps/api:/app/apps/api
+      - /app/apps/api/node_modules
+    command: pnpm --filter api exec nest -- start --watch
+    ports:
+      - "3001:3001"
+    networks:
+      - app_network
+    profiles:
+      - dev
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  app_network:
+    driver: bridge
