@@ -13,8 +13,6 @@ services:
       - "3000:80"
     networks:
       - homelab
-    profiles:
-      - prod
     environment:
       - VITE_API_URL=http://api-prod:3001
     labels:
@@ -37,8 +35,6 @@ services:
       - "3001:3000"
     networks:
       - homelab
-    profiles:
-      - prod
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.api-prod.rule=Host(`api.dnd.your-domain.com`)"
