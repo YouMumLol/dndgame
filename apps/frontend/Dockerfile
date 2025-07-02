@@ -33,9 +33,9 @@ ENV TURBO_TOKEN=$TURBO_TOKEN
 RUN pnpm turbo build --filter=frontend...
 
 # ---- Runner ----
-FROM base AS runner
+FROM nginx:1.25-alpine AS runner
 WORKDIR /app
-RUN pnpm add -g serve
-COPY --from=installer /app/apps/frontend/dist ./dist
-EXPOSE 3000
-CMD ["serve", "-s", "dist", "-l", "3000"]
+COPY --from=installer /app/apps/frontend/dist /usr/share/nginx/html
+COPY ./apps/frontend/nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
