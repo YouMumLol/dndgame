@@ -15,7 +15,7 @@ services:
       - VITE_API_URL=http://api-prod:3001
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend-prod.rule=Host(`dnd.your-domain.com`)"
+      - "traefik.http.routers.frontend-prod.rule=Host(`dnd.weeboo.xyz`)"
       - "traefik.http.routers.frontend-prod.entrypoints=websecure"
       - "traefik.http.routers.frontend-prod.tls.certresolver=myresolver"
       - "traefik.http.services.frontend-prod.loadbalancer.server.port=80"
@@ -33,7 +33,7 @@ services:
       - homelab
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.api-prod.rule=Host(`api.dnd.your-domain.com`)"
+      - "traefik.http.routers.api-prod.rule=Host(`api.weeboo.xyz`)"
       - "traefik.http.routers.api-prod.entrypoints=websecure"
       - "traefik.http.routers.api-prod.tls.certresolver=myresolver"
       - "traefik.http.services.api-prod.loadbalancer.server.port=3000"
