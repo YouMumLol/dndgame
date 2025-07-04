@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:20-alpine
 ENV NODE_ENV=development
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH:/app/node_modules/.bin"
@@ -6,17 +6,8 @@ RUN corepack enable
 
 WORKDIR /app
 
-COPY pnpm-lock.yaml .
-COPY pnpm-workspace.yaml .
-COPY package.json .
-COPY turbo.json .
 COPY .npmrc .
-COPY apps/api/package.json ./apps/api/
-COPY apps/frontend/package.json ./apps/frontend/
-COPY packages/ui/package.json ./packages/ui/
-COPY packages/eslint-config/package.json ./packages/eslint-config/
-COPY packages/typescript-config/package.json ./packages/typescript-config/
-
+COPY . .
 
 RUN pnpm install --prod=false
 

@@ -19,6 +19,8 @@ services:
       - "traefik.http.routers.frontend-prod.entrypoints=websecure"
       - "traefik.http.routers.frontend-prod.tls.certresolver=myresolver"
       - "traefik.http.services.frontend-prod.loadbalancer.server.port=80"
+    profiles:
+      - prod
 
   api-prod:
     container_name: api-prod
@@ -37,6 +39,8 @@ services:
       - "traefik.http.routers.api-prod.entrypoints=websecure"
       - "traefik.http.routers.api-prod.tls.certresolver=myresolver"
       - "traefik.http.services.api-prod.loadbalancer.server.port=3000"
+    profiles:
+      - prod
 
   # Development Services
   frontend-dev:
@@ -46,8 +50,7 @@ services:
       dockerfile: ./apps/frontend/Dockerfile.dev
     volumes:
       - ./apps/frontend:/app/apps/frontend
-      - /app/apps/frontend/node_modules
-    command: pnpm --filter frontend exec vite
+    command: pnpm --filter frontend run dev
     ports:
       - "3000:3000"
     networks:
@@ -70,10 +73,9 @@ services:
       dockerfile: ./apps/api/Dockerfile.dev
     volumes:
       - ./apps/api:/app/apps/api
-      - /app/apps/api/node_modules
-    command: pnpm --filter api exec nest -- start --watch
+    command: pnpm --filter api run start:dev
     ports:
-      - "3001:3001"
+      - "3001:3000"
     networks:
       - homelab
     profiles:
